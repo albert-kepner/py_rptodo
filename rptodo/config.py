@@ -11,7 +11,7 @@ from rptodo import (
     __app_name__,
 )
 
-CONFIG_DIR_PATH = Path(__file__).parent
+CONFIG_DIR_PATH = Path(__file__).parent.parent
 CONFIG_FILE_PATH = CONFIG_DIR_PATH / "config.ini"
 
 def _init_config_file() -> int:
@@ -25,15 +25,17 @@ def _init_config_file() -> int:
     except OSError:
         return FILE_ERROR
 
-    SUCCESS
+    return SUCCESS
 
 def _create_database(db_path:str) -> int:
     config_parser = configparser.ConfigParser()
     config_parser["General"] = {"database": db_path}
+    print(config_parser)
 
     try:
         with CONFIG_FILE_PATH.open("w") as file:
             config_parser.write(file)
+
     except OSError:
         return DB_WRITE_ERROR
 
@@ -42,7 +44,8 @@ def _create_database(db_path:str) -> int:
 def init_app(db_path:str) -> int:
     """initializes the application"""
     config_code = _init_config_file()
-    if config_code != WSUCCESS:
+    if config_code != SUCCESS:
+        print(f'{config_code=}')
         return  config_code
     database_code = _create_database(db_path)
     if database_code != SUCCESS:
